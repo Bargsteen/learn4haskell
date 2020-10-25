@@ -225,7 +225,7 @@ not :: Bool -> Bool
 
 Boolean 'and' operator:
 >>> :t (&&)
-(&&) :: Bool -> Bool
+(&&) :: Bool -> Bool -> Bool
 
 Addition of two numbers:
 >>> :t (+)
@@ -479,7 +479,7 @@ Implement a function that returns the last digit of a given number.
   whether it works for you!
 -}
 lastDigit :: Integral a => a -> a
-lastDigit = (`mod` 10)
+lastDigit = (`mod` 10) . abs
 
 
 {- |
@@ -509,7 +509,7 @@ branches because it is an expression and it must always return some value.
   satisfying the check will be returned and, therefore, evaluated.
 -}
 closestToZero :: Int -> Int -> Int
-closestToZero x y = if (abs x) <= (abs y) then x else y
+closestToZero x y = if abs x <= abs y then x else y
 
 
 {- |
@@ -545,9 +545,9 @@ Casual reminder about adding top-level type signatures for all functions :)
 
 mid :: (Num a, Ord a) => a -> a -> a -> a
 mid x y z
-  | x <= y && x <= z = x
-  | y <= x && y <= z = y
-  | otherwise        = z
+  | x <= y && x <= z = min y z
+  | y <= x && y <= z = min x z
+  | otherwise        = min x y
 
 {- |
 =⚔️= Task 8
@@ -630,9 +630,8 @@ specifying complex expressions.
 sumLast2 :: Integral a => a -> a
 sumLast2 n = sndLast + last1
   where
-    last2 = n `mod` 100
-    last1 = last2 `mod` 10
-    sndLast = last2 `div` 10
+    last2 = abs n `mod` 100
+    (sndLast, last1) = last2 `divMod` 10
 
 
 {- |
@@ -654,9 +653,10 @@ aren't ready for this boss yet!
 -}
 
 firstDigit :: Integral a => a -> a
-firstDigit n
-        | n < 10 = n
-        | otherwise = firstDigit $ n `div` 10
+firstDigit = go . abs
+  where go n
+          | abs n < 10 = n
+          | otherwise = firstDigit $ n `div` 10
 
 
 
